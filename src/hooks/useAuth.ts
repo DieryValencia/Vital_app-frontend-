@@ -17,12 +17,9 @@ export const useAuth = () => {
         data.token,
         data.refreshToken
       )
-      toast.success('¡Bienvenido a VitalApp!')
       navigate('/dashboard')
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Error al iniciar sesión')
-    },
+    // Removemos onError para manejar errores en el componente
   })
 
   const registerMutation = useMutation({

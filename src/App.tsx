@@ -1,20 +1,28 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import Login from '@/pages/Login'
+import Register from '@/pages/Register'
+import Dashboard from '@/pages/Dashboard'
+
 function App() {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-8">
-        <h1 className="text-4xl font-bold text-primary mb-4">
-          VitalApp Frontend
-        </h1>
-        <div className="bg-card border border-border rounded-lg p-6 shadow-lg">
-          <h2 className="text-2xl font-semibold text-card-foreground mb-2">
-            ✅ Tailwind CSS Configurado Correctamente
-          </h2>
-          <p className="text-muted-foreground">
-            Si puedes ver este texto con estilos, Tailwind está funcionando.
-          </p>
-        </div>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        {/* Ruta principal redirige a login */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
+        {/* Ruta de login */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Ruta de registro */}
+        <Route path="/register" element={<Register />} />
+
+        {/* Ruta de dashboard (protegida) */}
+        <Route path="/dashboard" element={<Dashboard />} />
+
+        {/* Ruta 404 - redirige a login */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
