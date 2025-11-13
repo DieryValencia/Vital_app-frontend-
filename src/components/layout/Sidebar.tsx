@@ -3,7 +3,7 @@ import { Home, Users, Activity, Calendar, Bell, Sparkles } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
 const navigation = [
-  { name: 'Dashboard', to: '/dashboard', icon: Home },
+  { name: 'Inicio', to: '/dashboard', icon: Home },
   { name: 'Pacientes', to: '/patients', icon: Users },
   { name: 'Triajes', to: '/triages', icon: Activity },
   { name: 'Citas', to: '/appointments', icon: Calendar },

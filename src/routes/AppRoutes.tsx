@@ -3,7 +3,7 @@ import { Layout } from '@/components/layout/Layout'
 import { ProtectedRoute } from './ProtectedRoute'
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
-import Dashboard from '@/pages/Dashboard'
+import Inicio from '@/pages/Dashboard'
 import PatientsPage from '@/pages/Patients'
 import TriagesPage from '@/pages/Triages'
 import AppointmentsPage from '@/pages/Appointments'
@@ -26,8 +26,8 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to="/dashboard" replace />} />
-        <Route path="dashboard" element={<Dashboard />} />
+        <Route index element={<Navigate to="/inicio" replace />} />
+        <Route path="inicio" element={<Inicio />} />
         <Route path="patients" element={<PatientsPage />} />
         <Route path="triages" element={<TriagesPage />} />
         <Route path="appointments" element={<AppointmentsPage />} />
@@ -36,7 +36,7 @@ export default function AppRoutes() {
       </Route>
 
       {/* Ruta 404 */}
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/inicio" replace />} />
     </Routes>
   )
 }

@@ -17,7 +17,7 @@ export const useAuth = () => {
         data.token,
         data.refreshToken
       )
-      navigate('/dashboard')
+      navigate('/inicio')
     },
     // Removemos onError para manejar errores en el componente
   })
@@ -31,7 +31,7 @@ export const useAuth = () => {
         data.refreshToken
       )
       toast.success('¡Cuenta creada exitosamente!')
-      navigate('/dashboard')
+      navigate('/inicio')
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.message || 'Error al registrarse')
