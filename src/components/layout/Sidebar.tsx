@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { Home, Users, Activity, Calendar, Bell } from 'lucide-react'
+import { Home, Users, Activity, Calendar, Bell, Sparkles } from 'lucide-react'
 import { cn } from '@/utils/cn'
 
 const navigation = [
@@ -8,6 +8,7 @@ const navigation = [
   { name: 'Triajes', to: '/triages', icon: Activity },
   { name: 'Citas', to: '/appointments', icon: Calendar },
   { name: 'Notificaciones', to: '/notifications', icon: Bell },
+  { name: 'Asistente IA', to: '/ai-assistant', icon: Sparkles },
 ]
 
 export const Sidebar = () => {

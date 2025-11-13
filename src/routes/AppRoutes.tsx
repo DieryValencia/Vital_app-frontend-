@@ -8,6 +8,7 @@ import PatientsPage from '@/pages/Patients'
 import TriagesPage from '@/pages/Triages'
 import AppointmentsPage from '@/pages/Appointments'
 import NotificationsPage from '@/pages/Notifications'
+import AIAssistantPage from '@/pages/AIAssistant'
 
 export default function AppRoutes() {
   return (
@@ -31,6 +32,7 @@ export default function AppRoutes() {
         <Route path="triages" element={<TriagesPage />} />
         <Route path="appointments" element={<AppointmentsPage />} />
         <Route path="notifications" element={<NotificationsPage />} />
+        <Route path="ai-assistant" element={<AIAssistantPage />} />
       </Route>
 
       {/* Ruta 404 */}
