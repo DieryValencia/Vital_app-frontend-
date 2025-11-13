@@ -1,0 +1,11 @@
+node_modules
+.next
+dist
+.git
+.gitignore
+README.md
+.env.example
+.env.development
+.env.production.example
+*.md
+.DS_Store
