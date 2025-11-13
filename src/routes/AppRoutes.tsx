@@ -4,6 +4,7 @@ import { ProtectedRoute } from './ProtectedRoute'
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
 import Dashboard from '@/pages/Dashboard'
+import PatientsPage from '@/pages/Patients'
 
 export default function AppRoutes() {
   return (
@@ -23,7 +24,7 @@ export default function AppRoutes() {
       >
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
-        {/* Las demás rutas se agregarán en los siguientes prompts */}
+        <Route path="patients" element={<PatientsPage />} />
       </Route>
 
       {/* Ruta 404 */}
