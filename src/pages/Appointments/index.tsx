@@ -39,6 +39,9 @@ export default function AppointmentsPage() {
     if (!appointments) return []
 
     return appointments.filter((appointment) => {
+      // Validar que el paciente existe
+      if (!appointment.patient) return false
+
       // Filtro de búsqueda
       const matchesSearch =
         appointment.patient.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||

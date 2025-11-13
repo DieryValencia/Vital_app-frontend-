@@ -46,7 +46,7 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
     formState: { errors },
   } = useForm<AppointmentFormData>({
     resolver: zodResolver(appointmentSchema),
-    defaultValues: appointment ? {
+    defaultValues: appointment && appointment.patient ? {
       patientId: appointment.patient.id,
       appointmentDate: appointment.appointmentDate.split('T')[0] + 'T' + appointment.appointmentDate.split('T')[1].substring(0, 5),
       reason: appointment.reason,
@@ -55,6 +55,10 @@ export const AppointmentForm: React.FC<AppointmentFormProps> = ({
       observations: appointment.observations || '',
     } : {
       appointmentDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
+      reason: '',
+      doctorName: '',
+      specialty: '',
+      observations: '',
     }
   })
 

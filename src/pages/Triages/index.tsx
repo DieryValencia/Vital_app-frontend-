@@ -34,6 +34,9 @@ export default function TriagesPage() {
     if (!triages) return []
 
     return triages.filter((triage) => {
+      // Validar que el paciente existe
+      if (!triage.patient) return false
+
       // Filtro de búsqueda
       const matchesSearch =
         getFullName(triage.patient.firstName, triage.patient.lastName).toLowerCase().includes(searchTerm.toLowerCase()) ||

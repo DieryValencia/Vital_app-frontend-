@@ -30,6 +30,12 @@ const triageSchema = z.object({
   priority: z.enum(['EMERGENCIA', 'URGENTE', 'MENOS_URGENTE', 'NO_URGENTE'], {
     errorMap: () => ({ message: 'Debe seleccionar una prioridad' })
   }),
+  severityLevel: z.number()
+    .min(1, 'El nivel de severidad debe ser entre 1 y 5')
+    .max(5, 'El nivel de severidad debe ser entre 1 y 5'),
+  recommendedAction: z.string()
+    .min(5, 'La acción recomendada debe tener al menos 5 caracteres')
+    .max(500, 'La acción recomendada no puede exceder 500 caracteres'),
   observations: z.string().max(1000).optional(),
 })
 
@@ -56,7 +62,7 @@ export const TriageForm: React.FC<TriageFormProps> = ({
     formState: { errors },
   } = useForm<TriageFormData>({
     resolver: zodResolver(triageSchema),
-    defaultValues: triage ? {
+    defaultValues: triage && triage.patient ? {
       patientId: triage.patient.id,
       triageDate: triage.triageDate.split('T')[0] + 'T' + triage.triageDate.split('T')[1].substring(0, 5),
       symptoms: triage.symptoms,
@@ -66,14 +72,30 @@ export const TriageForm: React.FC<TriageFormProps> = ({
       respiratoryRate: triage.respiratoryRate,
       oxygenSaturation: triage.oxygenSaturation,
       priority: triage.priority,
+      severityLevel: triage.severityLevel,
+      recommendedAction: triage.recommendedAction,
       observations: triage.observations || '',
     } : {
       triageDate: new Date().toISOString().slice(0, 16),
+      symptoms: '',
+      temperature: 37,
+      bloodPressure: '120/80',
+      heartRate: 80,
+      respiratoryRate: 20,
+      oxygenSaturation: 98,
+      priority: 'NO_URGENTE',
+      severityLevel: 3,
+      recommendedAction: '',
+      observations: '',
     }
   })
 
+  const handleFormSubmit = (data: TriageFormData) => {
+    onSubmit(data as TriageCreateInput)
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       <Controller
         name="patientId"
         control={control}
@@ -171,6 +193,35 @@ export const TriageForm: React.FC<TriageFormProps> = ({
             <p className="mt-1 text-sm text-red-600">{errors.priority.message}</p>
           )}
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Input
+          label="Nivel de Severidad (1-5) *"
+          type="number"
+          min="1"
+          max="5"
+          placeholder="3"
+          error={errors.severityLevel?.message}
+          {...register('severityLevel', { valueAsNumber: true })}
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Acción Recomendada *
+        </label>
+        <textarea
+          rows={3}
+          placeholder="Describa la acción recomendada para el paciente..."
+          className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+            errors.recommendedAction ? 'border-red-500' : 'border-gray-300'
+          }`}
+          {...register('recommendedAction')}
+        />
+        {errors.recommendedAction && (
+          <p className="mt-1 text-sm text-red-600">{errors.recommendedAction.message}</p>
+        )}
       </div>
 
       <div>

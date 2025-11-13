@@ -17,7 +17,7 @@ export const AppointmentDeleteDialog: React.FC<AppointmentDeleteDialogProps> = (
   onConfirm,
   isDeleting
 }) => {
-  if (!isOpen || !appointment) return null
+  if (!isOpen || !appointment || !appointment.patient) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">

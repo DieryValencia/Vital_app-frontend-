@@ -1,6 +1,7 @@
 import type { Patient } from './patients.types'
 
 export type Priority = 'EMERGENCIA' | 'URGENTE' | 'MENOS_URGENTE' | 'NO_URGENTE'
+export type SeverityLevel = 1 | 2 | 3 | 4 | 5
 
 export interface Triage {
   id: number
@@ -13,6 +14,8 @@ export interface Triage {
   respiratoryRate: number
   oxygenSaturation: number
   priority: Priority
+  severityLevel: SeverityLevel
+  recommendedAction: string
   observations?: string
   attendedBy: string
 }
@@ -27,6 +30,8 @@ export interface TriageCreateInput {
   respiratoryRate: number
   oxygenSaturation: number
   priority: Priority
+  severityLevel: SeverityLevel
+  recommendedAction: string
   observations?: string
 }
 
@@ -38,6 +43,8 @@ export interface TriageUpdateInput {
   respiratoryRate?: number
   oxygenSaturation?: number
   priority?: Priority
+  severityLevel?: SeverityLevel
+  recommendedAction?: string
   observations?: string
 }
 

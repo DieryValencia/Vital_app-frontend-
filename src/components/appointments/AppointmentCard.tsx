@@ -19,6 +19,15 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   onDelete,
   onStatusChange
 }) => {
+  // Validar que el paciente existe
+  if (!appointment.patient) {
+    return (
+      <Card className="opacity-50">
+        <p className="text-gray-500 text-center py-4">Datos de paciente no disponibles</p>
+      </Card>
+    )
+  }
+
   return (
     <Card className="hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-4">
