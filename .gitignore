@@ -6,6 +6,20 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.production
+# Pero sí incluir los archivos example
+!.env.example
+!.env.production.example
+!.env.development.example
+
+# Vercel
+.vercel/
+.vercel
+
 # Runtime data
 pids
 *.pid
