@@ -1,11 +1,7 @@
 import axios from 'axios'
 
-// En desarrollo, usa el proxy de Vite. En producción, usa la URL completa
-const API_URL = import.meta.env.VITE_API_URL || (
-  import.meta.env.DEV 
-    ? '' // En desarrollo, usa rutas relativas (proxy de Vite)
-    : 'http://localhost:8080'
-)
+// Lee la URL de la variable de entorno VITE_API_URL
+const API_URL = import.meta.env.VITE_API_URL || 'https://web-production-9485.up.railway.app'
 
 const api = axios.create({
   baseURL: API_URL,
