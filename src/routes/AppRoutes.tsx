@@ -5,6 +5,7 @@ import Login from '@/pages/Login'
 import Register from '@/pages/Register'
 import Dashboard from '@/pages/Dashboard'
 import PatientsPage from '@/pages/Patients'
+import TriagesPage from '@/pages/Triages'
 
 export default function AppRoutes() {
   return (
@@ -25,6 +26,7 @@ export default function AppRoutes() {
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="patients" element={<PatientsPage />} />
+        <Route path="triages" element={<TriagesPage />} />
       </Route>
 
       {/* Ruta 404 */}
