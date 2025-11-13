@@ -6,6 +6,8 @@ import Register from '@/pages/Register'
 import Dashboard from '@/pages/Dashboard'
 import PatientsPage from '@/pages/Patients'
 import TriagesPage from '@/pages/Triages'
+import AppointmentsPage from '@/pages/Appointments'
+import NotificationsPage from '@/pages/Notifications'
 
 export default function AppRoutes() {
   return (
@@ -27,6 +29,8 @@ export default function AppRoutes() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="patients" element={<PatientsPage />} />
         <Route path="triages" element={<TriagesPage />} />
+        <Route path="appointments" element={<AppointmentsPage />} />
+        <Route path="notifications" element={<NotificationsPage />} />
       </Route>
 
       {/* Ruta 404 */}

@@ -2,6 +2,7 @@ import { LogOut, User } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { useAuthStore } from '@/store/authStore'
 import { Button } from '@/components/ui/Button'
+import { NotificationDropdown } from '@/components/notifications/NotificationDropdown'
 
 export const Header = () => {
   const { user } = useAuthStore()
@@ -16,6 +17,9 @@ export const Header = () => {
         </div>
 
         <div className="flex items-center gap-4">
+          {/* Dropdown de notificaciones */}
+          <NotificationDropdown />
+
           <div className="flex items-center gap-2 text-sm">
             <User className="h-4 w-4 text-gray-600" />
             <span className="text-gray-700">{user?.username}</span>
