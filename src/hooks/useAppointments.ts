@@ -16,7 +16,10 @@ export const useAppointments = () => {
   const createMutation = useMutation({
     mutationFn: appointmentsApi.create,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['appointments'] })
+      queryClient.invalidateQueries({ 
+        queryKey: ['appointments'],
+        refetchType: 'all'
+      })
       toast.success('Cita creada exitosamente')
     },
     onError: (error: any) => {
@@ -29,7 +32,10 @@ export const useAppointments = () => {
     mutationFn: ({ id, data }: { id: number; data: AppointmentUpdateInput }) =>
       appointmentsApi.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['appointments'] })
+      queryClient.invalidateQueries({ 
+        queryKey: ['appointments'],
+        refetchType: 'all'
+      })
       toast.success('Cita actualizada exitosamente')
     },
     onError: (error: any) => {
@@ -42,7 +48,10 @@ export const useAppointments = () => {
     mutationFn: ({ id, status }: { id: number; status: AppointmentStatus }) =>
       appointmentsApi.updateStatus(id, status),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['appointments'] })
+      queryClient.invalidateQueries({ 
+        queryKey: ['appointments'],
+        refetchType: 'all'
+      })
       toast.success('Estado actualizado')
     },
     onError: (error: any) => {
@@ -54,7 +63,10 @@ export const useAppointments = () => {
   const deleteMutation = useMutation({
     mutationFn: appointmentsApi.delete,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['appointments'] })
+      queryClient.invalidateQueries({ 
+        queryKey: ['appointments'],
+        refetchType: 'all'
+      })
       toast.success('Cita eliminada')
     },
     onError: (error: any) => {

@@ -19,7 +19,10 @@ export const usePatients = (params?: {
   const createMutation = useMutation({
     mutationFn: patientsApi.create,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patients'] })
+      queryClient.invalidateQueries({ 
+        queryKey: ['patients'],
+        refetchType: 'all'
+      })
       toast.success('Paciente creado exitosamente')
     },
     onError: (error: any) => {
@@ -46,7 +49,15 @@ export const usePatients = (params?: {
       toast.success('Paciente eliminado')
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Error al eliminar paciente')
+      const errorMessage = error.response?.data?.message || ''
+      const isConstraintError = errorMessage.includes('violates foreign key constraint') || 
+                               errorMessage.includes('still referenced')
+      
+      if (isConstraintError) {
+        toast.error('No se puede eliminar el paciente. Tiene citas o triajes asociados.')
+      } else {
+        toast.error(errorMessage || 'Error al eliminar paciente')
+      }
     },
   })
 

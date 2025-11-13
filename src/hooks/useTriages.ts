@@ -16,7 +16,10 @@ export const useTriages = () => {
   const createMutation = useMutation({
     mutationFn: triagesApi.create,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['triages'] })
+      queryClient.invalidateQueries({ 
+        queryKey: ['triages'],
+        refetchType: 'all'
+      })
       toast.success('Triaje creado exitosamente')
     },
     onError: (error: any) => {
@@ -29,7 +32,10 @@ export const useTriages = () => {
     mutationFn: ({ id, data }: { id: number; data: TriageUpdateInput }) =>
       triagesApi.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['triages'] })
+      queryClient.invalidateQueries({ 
+        queryKey: ['triages'],
+        refetchType: 'all'
+      })
       toast.success('Triaje actualizado exitosamente')
     },
     onError: (error: any) => {
@@ -41,7 +47,10 @@ export const useTriages = () => {
   const deleteMutation = useMutation({
     mutationFn: triagesApi.delete,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['triages'] })
+      queryClient.invalidateQueries({ 
+        queryKey: ['triages'],
+        refetchType: 'all'
+      })
       toast.success('Triaje eliminado')
     },
     onError: (error: any) => {
