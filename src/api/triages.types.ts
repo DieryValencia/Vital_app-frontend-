@@ -3,6 +3,27 @@ import type { Patient } from './patients.types'
 export type Priority = 'EMERGENCIA' | 'URGENTE' | 'MENOS_URGENTE' | 'NO_URGENTE'
 export type SeverityLevel = 1 | 2 | 3 | 4 | 5
 
+export const PRIORITY_LABELS: Record<Priority, string> = {
+  EMERGENCIA: 'Emergencia',
+  URGENTE: 'Urgente',
+  MENOS_URGENTE: 'Menos Urgente',
+  NO_URGENTE: 'No Urgente',
+}
+
+export const PRIORITY_COLORS: Record<Priority, string> = {
+  EMERGENCIA: 'bg-red-100 text-red-800 border-red-200',
+  URGENTE: 'bg-orange-100 text-orange-800 border-orange-200',
+  MENOS_URGENTE: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  NO_URGENTE: 'bg-green-100 text-green-800 border-green-200',
+}
+
+export const PRIORITY_ICON_COLORS: Record<Priority, string> = {
+  EMERGENCIA: 'text-red-600',
+  URGENTE: 'text-orange-600',
+  MENOS_URGENTE: 'text-yellow-600',
+  NO_URGENTE: 'text-green-600',
+}
+
 export interface Triage {
   id: number
   patient: Patient
