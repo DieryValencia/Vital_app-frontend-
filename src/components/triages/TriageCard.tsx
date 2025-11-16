@@ -5,6 +5,7 @@ import { PriorityBadge } from './PriorityBadge'
 import { VitalSignsDisplay } from './VitalSignsDisplay'
 import { getFullName } from '@/utils/patientUtils'
 import { formatDateTime } from '@/utils/dateUtils'
+import { useRole } from '@/hooks/useRole'
 import type { Triage } from '@/api/triages.types'
 
 interface TriageCardProps {
@@ -14,6 +15,8 @@ interface TriageCardProps {
 }
 
 export const TriageCard: React.FC<TriageCardProps> = ({ triage, onEdit, onDelete }) => {
+  const { isDoctor, isAdmin } = useRole()
+
   // Validar que el paciente existe
   if (!triage.patient) {
     return (
@@ -72,26 +75,28 @@ export const TriageCard: React.FC<TriageCardProps> = ({ triage, onEdit, onDelete
         </div>
       )}
 
-      <div className="flex gap-2 mt-4 pt-4 border-t">
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={() => onEdit(triage)}
-          className="flex-1"
-        >
-          <Edit className="h-4 w-4 mr-1" />
-          Editar
-        </Button>
-        <Button
-          size="sm"
-          variant="danger"
-          onClick={() => onDelete(triage)}
-          className="flex-1"
-        >
-          <Trash2 className="h-4 w-4 mr-1" />
-          Eliminar
-        </Button>
-      </div>
+      {(isDoctor || isAdmin) && (
+        <div className="flex gap-2 mt-4 pt-4 border-t">
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={() => onEdit(triage)}
+            className="flex-1"
+          >
+            <Edit className="h-4 w-4 mr-1" />
+            Editar
+          </Button>
+          <Button
+            size="sm"
+            variant="danger"
+            onClick={() => onDelete(triage)}
+            className="flex-1"
+          >
+            <Trash2 className="h-4 w-4 mr-1" />
+            Eliminar
+          </Button>
+        </div>
+      )}
     </Card>
   )
 }

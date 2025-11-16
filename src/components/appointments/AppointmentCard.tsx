@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { StatusBadge } from './StatusBadge'
 import { StatusSelector } from './StatusSelector'
+import { useRole } from '@/hooks/useRole'
 import type { Appointment, AppointmentStatus } from '@/api/appointments.types'
 import { formatDateTime } from '@/utils/dateUtils'
 
@@ -19,6 +20,8 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   onDelete,
   onStatusChange
 }) => {
+  const { isDoctor, isAdmin } = useRole()
+
   // Validar que el paciente existe
   if (!appointment.patient) {
     return (
@@ -80,34 +83,38 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
         </div>
       )}
 
-      <div className="mb-4">
-        <p className="text-xs text-gray-500 mb-2">Cambiar estado:</p>
-        <StatusSelector
-          currentStatus={appointment.status}
-          onStatusChange={(status) => onStatusChange(appointment.id, status)}
-        />
-      </div>
+      {(isDoctor || isAdmin) && (
+        <>
+          <div className="mb-4">
+            <p className="text-xs text-gray-500 mb-2">Cambiar estado:</p>
+            <StatusSelector
+              currentStatus={appointment.status}
+              onStatusChange={(status) => onStatusChange(appointment.id, status)}
+            />
+          </div>
 
-      <div className="flex gap-2 pt-4 border-t">
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={() => onEdit(appointment)}
-          className="flex-1"
-        >
-          <Edit className="h-4 w-4 mr-1" />
-          Editar
-        </Button>
-        <Button
-          size="sm"
-          variant="danger"
-          onClick={() => onDelete(appointment)}
-          className="flex-1"
-        >
-          <Trash2 className="h-4 w-4 mr-1" />
-          Eliminar
-        </Button>
-      </div>
+          <div className="flex gap-2 pt-4 border-t">
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => onEdit(appointment)}
+              className="flex-1"
+            >
+              <Edit className="h-4 w-4 mr-1" />
+              Editar
+            </Button>
+            <Button
+              size="sm"
+              variant="danger"
+              onClick={() => onDelete(appointment)}
+              className="flex-1"
+            >
+              <Trash2 className="h-4 w-4 mr-1" />
+              Eliminar
+            </Button>
+          </div>
+        </>
+      )}
     </Card>
   )
 }

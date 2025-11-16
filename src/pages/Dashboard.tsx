@@ -1,19 +1,42 @@
 import { useAuthStore } from '@/store/authStore'
 import { Card } from '@/components/ui/Card'
 import { usePatients } from '@/hooks/usePatients'
-import { useTriages } from '@/hooks/useTriages'
-import { useAppointments } from '@/hooks/useAppointments'
+import { useTriages, usePatientTriages } from '@/hooks/useTriages'
+import { useAppointments, usePatientAppointments } from '@/hooks/useAppointments'
+import { useRole } from '@/hooks/useRole'
 import { Users, Activity, Calendar, TrendingUp, Heart, Clock, CheckCircle, AlertCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-export default function Inicio() {
+export default function Dashboard() {
   const { user } = useAuthStore()
+  const { isAdmin, isDoctor, isPatient } = useRole()
   const { patients } = usePatients()
   const { triages } = useTriages()
   const { appointments } = useAppointments()
+  const { data: myTriages } = usePatientTriages(user?.patientId!)
+  const { data: myAppointments } = usePatientAppointments(user?.patientId!)
   const navigate = useNavigate()
 
-  const stats = [
+  const stats = isPatient ? [
+    {
+      label: 'Mis Triajes',
+      value: myTriages?.length || 0,
+      icon: Activity,
+      color: 'from-green-500 to-green-600',
+      bgColor: 'bg-green-50',
+      textColor: 'text-green-600',
+      route: '/my-triages',
+    },
+    {
+      label: 'Mis Citas',
+      value: myAppointments?.length || 0,
+      icon: Calendar,
+      color: 'from-purple-500 to-purple-600',
+      bgColor: 'bg-purple-50',
+      textColor: 'text-purple-600',
+      route: '/my-appointments',
+    },
+  ] : [
     {
       label: 'Pacientes',
       value: patients?.length || 0,
@@ -43,8 +66,8 @@ export default function Inicio() {
     },
   ]
 
-  const upcomingAppointments = appointments?.slice(0, 3) || []
-  const recentTriages = triages?.slice(0, 3) || []
+  const upcomingAppointments = isPatient ? myAppointments?.slice(0, 3) || [] : appointments?.slice(0, 3) || []
+  const recentTriages = isPatient ? myTriages?.slice(0, 3) || [] : triages?.slice(0, 3) || []
 
   return (
     <div className="space-y-8">
@@ -115,14 +138,19 @@ export default function Inicio() {
               Acciones Rápidas
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {[
+              {(isPatient ? [
+                { icon: Activity, label: 'Mis Triajes', color: 'from-green-400 to-green-500', action: () => navigate('/my-triages') },
+                { icon: Calendar, label: 'Mis Citas', color: 'from-purple-400 to-purple-500', action: () => navigate('/my-appointments') },
+                { icon: CheckCircle, label: 'Historial Médico', color: 'from-pink-400 to-pink-500', action: () => navigate('/my-triages') },
+                { icon: AlertCircle, label: 'Notificaciones', color: 'from-red-400 to-red-500', action: () => navigate('/notifications') },
+              ] : [
                 { icon: Users, label: 'Nuevo Paciente', color: 'from-blue-400 to-blue-500', action: () => navigate('/patients') },
                 { icon: Activity, label: 'Registrar Triaje', color: 'from-green-400 to-green-500', action: () => navigate('/triages') },
                 { icon: Calendar, label: 'Agendar Cita', color: 'from-purple-400 to-purple-500', action: () => navigate('/appointments') },
                 { icon: TrendingUp, label: 'Ver Reportes', color: 'from-orange-400 to-orange-500', action: () => navigate('/triages') },
                 { icon: CheckCircle, label: 'Historial', color: 'from-pink-400 to-pink-500', action: () => navigate('/appointments') },
                 { icon: AlertCircle, label: 'Alertas', color: 'from-red-400 to-red-500', action: () => navigate('/notifications') },
-              ].map((action, idx) => {
+              ]).map((action, idx) => {
                 const ActionIcon = action.icon
                 return (
                   <button
@@ -147,7 +175,7 @@ export default function Inicio() {
           <div>
             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <Calendar className="h-5 w-5 text-purple-500" />
-              Próximas Citas
+              {isPatient ? 'Mis Citas' : 'Próximas Citas'}
             </h3>
             {upcomingAppointments.length > 0 ? (
               <div className="space-y-3">
@@ -172,7 +200,7 @@ export default function Inicio() {
           <div>
             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <Activity className="h-5 w-5 text-green-500" />
-              Triajes Recientes
+              {isPatient ? 'Mis Triajes' : 'Triajes Recientes'}
             </h3>
             {recentTriages.length > 0 ? (
               <div className="space-y-3">
@@ -204,27 +232,31 @@ export default function Inicio() {
 
       {/* Footer Stats */}
       <Card className="border-0 shadow-lg bg-gradient-to-r from-indigo-600 to-indigo-700 text-white">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+        <div className={`grid grid-cols-1 ${isPatient ? 'md:grid-cols-2' : 'md:grid-cols-4'} gap-4 text-center`}>
           <div>
             <Clock className="h-6 w-6 mx-auto mb-2 text-indigo-200" />
             <p className="text-2xl font-bold">{upcomingAppointments.length}</p>
-            <p className="text-sm text-indigo-200">Citas Próximas</p>
+            <p className="text-sm text-indigo-200">{isPatient ? 'Mis Citas' : 'Citas Próximas'}</p>
           </div>
           <div>
             <Heart className="h-6 w-6 mx-auto mb-2 text-indigo-200" />
             <p className="text-2xl font-bold">{recentTriages.length}</p>
-            <p className="text-sm text-indigo-200">Triajes Activos</p>
+            <p className="text-sm text-indigo-200">{isPatient ? 'Mis Triajes' : 'Triajes Activos'}</p>
           </div>
-          <div>
-            <Users className="h-6 w-6 mx-auto mb-2 text-indigo-200" />
-            <p className="text-2xl font-bold">{patients?.length || 0}</p>
-            <p className="text-sm text-indigo-200">Pacientes Totales</p>
-          </div>
-          <div>
-            <TrendingUp className="h-6 w-6 mx-auto mb-2 text-indigo-200" />
-            <p className="text-2xl font-bold">98%</p>
-            <p className="text-sm text-indigo-200">Satisfacción</p>
-          </div>
+          {!isPatient && (
+            <>
+              <div>
+                <Users className="h-6 w-6 mx-auto mb-2 text-indigo-200" />
+                <p className="text-2xl font-bold">{patients?.length || 0}</p>
+                <p className="text-sm text-indigo-200">Pacientes Totales</p>
+              </div>
+              <div>
+                <TrendingUp className="h-6 w-6 mx-auto mb-2 text-indigo-200" />
+                <p className="text-2xl font-bold">98%</p>
+                <p className="text-sm text-indigo-200">Satisfacción</p>
+              </div>
+            </>
+          )}
         </div>
       </Card>
     </div>

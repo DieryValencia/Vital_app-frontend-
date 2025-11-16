@@ -1,4 +1,5 @@
 import axios from 'axios'
+import toast from 'react-hot-toast'
 
 // Lee la URL de la variable de entorno VITE_API_URL
 const API_URL = import.meta.env.VITE_API_URL || 'https://web-production-9485.up.railway.app'
@@ -30,6 +31,11 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config
+
+    // Si no tiene permisos (403)
+    if (error.response?.status === 403) {
+      toast.error('No tienes permisos para realizar esta acción')
+    }
 
     // Si el token expiró (401) y no hemos intentado refresh
     if (error.response?.status === 401 && !originalRequest._retry) {

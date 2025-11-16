@@ -4,6 +4,9 @@ import { z } from 'zod'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { PatientSelector } from './PatientSelector'
+import { useRole } from '@/hooks/useRole'
+import { useAuthStore } from '@/store/authStore'
+import { toast } from 'react-hot-toast'
 import type { Triage, TriageCreateInput, Priority } from '@/api/triages.types'
 import type { Patient } from '@/api/patients.types'
 
@@ -54,6 +57,9 @@ export const TriageForm: React.FC<TriageFormProps> = ({
   onCancel,
   isSubmitting = false
 }) => {
+  const { user } = useAuthStore()
+  const { isPatient } = useRole()
+
   const {
     register,
     handleSubmit,
@@ -91,6 +97,10 @@ export const TriageForm: React.FC<TriageFormProps> = ({
   })
 
   const handleFormSubmit = (data: TriageFormData) => {
+    if (isPatient && data.patientId !== user?.patientId) {
+      toast.error('Solo puedes crear triajes para ti mismo')
+      return
+    }
     onSubmit(data as TriageCreateInput)
   }
 
