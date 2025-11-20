@@ -13,7 +13,7 @@ export const useAuth = () => {
     mutationFn: authApi.login,
     onSuccess: (data) => {
       setAuth(
-        { id: data.id, username: data.username, email: data.email, roles: data.roles },
+        { id: data.id, username: data.username, email: data.email, roles: ["USER"] },
         data.token,
         data.refreshToken
       )
@@ -26,7 +26,7 @@ export const useAuth = () => {
     mutationFn: authApi.register,
     onSuccess: (data) => {
       setAuth(
-        { id: data.id, username: data.username, email: data.email, roles: data.roles },
+        { id: data.id, username: data.username, email: data.email, roles: ["USER"] },
         data.token,
         data.refreshToken
       )

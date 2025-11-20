@@ -17,11 +17,15 @@ export interface AuthResponse {
   id: number
   username: string
   email: string
+  roles: UserRole[]
 }
 
 // User Types
+export type UserRole = "USER"
+
 export interface User {
   id: number
   username: string
   email: string
+  roles: UserRole[]
 }

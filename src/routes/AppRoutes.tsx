@@ -32,27 +32,27 @@ export default function AppRoutes() {
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="patients" element={
-          <RoleProtectedRoute allowedRoles={['ROLE_DOCTOR', 'ROLE_ADMIN']}>
+          <RoleProtectedRoute allowedRoles={['USER']}>
             <PatientsPage />
           </RoleProtectedRoute>
         } />
         <Route path="triages" element={
-          <RoleProtectedRoute allowedRoles={['ROLE_DOCTOR', 'ROLE_ADMIN']}>
+          <RoleProtectedRoute allowedRoles={['USER']}>
             <TriagesPage />
           </RoleProtectedRoute>
         } />
         <Route path="appointments" element={
-          <RoleProtectedRoute allowedRoles={['ROLE_DOCTOR', 'ROLE_ADMIN']}>
+          <RoleProtectedRoute allowedRoles={['USER']}>
             <AppointmentsPage />
           </RoleProtectedRoute>
         } />
         <Route path="my-triages" element={
-          <RoleProtectedRoute allowedRoles={['ROLE_PATIENT']}>
+          <RoleProtectedRoute allowedRoles={['USER']}>
             <MyTriagesPage />
           </RoleProtectedRoute>
         } />
         <Route path="my-appointments" element={
-          <RoleProtectedRoute allowedRoles={['ROLE_PATIENT']}>
+          <RoleProtectedRoute allowedRoles={['USER']}>
             <MyAppointmentsPage />
           </RoleProtectedRoute>
         } />

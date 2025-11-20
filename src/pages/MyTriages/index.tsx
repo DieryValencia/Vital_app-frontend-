@@ -6,7 +6,7 @@ import { getFullName } from '@/utils/patientUtils'
 
 export default function MyTriagesPage() {
   const { user } = useAuthStore()
-  const { data: triages, isLoading } = usePatientTriages(user?.patientId!)
+  const { data: triages, isLoading } = usePatientTriages(user?.id!)
 
   if (isLoading) {
     return (

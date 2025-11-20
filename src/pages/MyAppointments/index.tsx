@@ -5,7 +5,7 @@ import { AppointmentList } from '@/components/appointments/AppointmentList'
 
 export default function MyAppointmentsPage() {
   const { user } = useAuthStore()
-  const { data: appointments, isLoading } = usePatientAppointments(user?.patientId!)
+  const { data: appointments, isLoading } = usePatientAppointments(user?.id!)
 
   if (isLoading) {
     return (
