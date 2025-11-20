@@ -1,46 +1,50 @@
 import { useState } from 'react'
 import { Sparkles, Send } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { useOpenAI } from '@/hooks/useOpenAI'
+import { useAI } from '@/hooks/useAI'
 
 interface QuickAIAnalysisProps {
   symptoms?: string
-  medicalHistory?: string
-  onAnalysisComplete?: (analysis: string) => void
+  patientAge?: string
+  patientGender?: string
+  onAnalysisComplete?: (analysis: any) => void
   compact?: boolean
 }
 
 export const QuickAIAnalysis: React.FC<QuickAIAnalysisProps> = ({
   symptoms = '',
-  medicalHistory = '',
+  patientAge = '',
+  patientGender = '',
   onAnalysisComplete,
   compact = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [inputSymptoms, setInputSymptoms] = useState(symptoms)
-  const [inputHistory, setInputHistory] = useState(medicalHistory)
+  const [inputAge, setInputAge] = useState(patientAge)
+  const [inputGender, setInputGender] = useState(patientGender)
 
   const {
-    generateRecommendation,
-    recommendationData,
-    isGeneratingRecommendation,
-    resetRecommendation,
-  } = useOpenAI()
+    quickAnalysis,
+    quickAnalysisData,
+    isQuickAnalyzing,
+    resetQuickAnalysis,
+  } = useAI()
 
   const handleGenerateAnalysis = () => {
     if (!inputSymptoms.trim()) return
 
-    generateRecommendation({
+    quickAnalysis({
       symptoms: inputSymptoms.trim(),
-      medicalHistory: inputHistory.trim(),
+      patientAge: inputAge.trim() || undefined,
+      patientGender: inputGender.trim() || undefined,
     })
   }
 
   const handleUseAnalysis = () => {
-    if (recommendationData?.data && onAnalysisComplete) {
-      onAnalysisComplete(recommendationData.data)
+    if (quickAnalysisData?.data && onAnalysisComplete) {
+      onAnalysisComplete(quickAnalysisData.data)
       setIsOpen(false)
-      resetRecommendation()
+      resetQuickAnalysis()
     }
   }
 
@@ -71,33 +75,50 @@ export const QuickAIAnalysis: React.FC<QuickAIAnalysisProps> = ({
       {isOpen && (
         <div className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-200 rounded-lg space-y-3">
           <div>
-            <label className="text-xs font-medium text-gray-700">Síntomas adicionales</label>
+            <label className="text-xs font-medium text-gray-700">Síntomas</label>
             <textarea
               value={inputSymptoms}
               onChange={(e) => setInputSymptoms(e.target.value)}
               rows={2}
               placeholder="Ingresa síntomas para el análisis..."
               className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={isGeneratingRecommendation}
+              disabled={isQuickAnalyzing}
             />
           </div>
 
-          <div>
-            <label className="text-xs font-medium text-gray-700">Historial médico (opcional)</label>
-            <textarea
-              value={inputHistory}
-              onChange={(e) => setInputHistory(e.target.value)}
-              rows={1}
-              placeholder="Alergias, condiciones previas..."
-              className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={isGeneratingRecommendation}
-            />
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="text-xs font-medium text-gray-700">Edad</label>
+              <input
+                type="number"
+                value={inputAge}
+                onChange={(e) => setInputAge(e.target.value)}
+                placeholder="25"
+                className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={isQuickAnalyzing}
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-gray-700">Género</label>
+              <select
+                value={inputGender}
+                onChange={(e) => setInputGender(e.target.value)}
+                className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={isQuickAnalyzing}
+              >
+                <option value="">Seleccionar</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
           </div>
 
           <div className="flex gap-2">
             <Button
               onClick={handleGenerateAnalysis}
-              isLoading={isGeneratingRecommendation}
+              isLoading={isQuickAnalyzing}
               size="sm"
               className="flex items-center gap-2"
             >
@@ -106,9 +127,17 @@ export const QuickAIAnalysis: React.FC<QuickAIAnalysisProps> = ({
             </Button>
           </div>
 
-          {recommendationData && (
+          {quickAnalysisData && (
             <div className="p-3 bg-white border border-green-200 rounded text-sm space-y-2">
-              <p className="text-gray-700 whitespace-pre-wrap">{recommendationData.data}</p>
+              <div className="space-y-1">
+                <p><strong>Análisis:</strong> {quickAnalysisData.data.analysis}</p>
+                <p><strong>Recomendaciones:</strong> {quickAnalysisData.data.recommendations}</p>
+                <p><strong>Urgencia:</strong> <span className={`font-medium ${
+                  quickAnalysisData.data.urgencyLevel?.toLowerCase() === 'alto' ? 'text-red-600' :
+                  quickAnalysisData.data.urgencyLevel?.toLowerCase() === 'medio' ? 'text-yellow-600' : 'text-green-600'
+                }`}>{quickAnalysisData.data.urgencyLevel}</span></p>
+                <p className="text-gray-500 italic text-xs">{quickAnalysisData.data.disclaimer}</p>
+              </div>
               {onAnalysisComplete && (
                 <Button
                   onClick={handleUseAnalysis}

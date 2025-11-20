@@ -26,7 +26,11 @@ export default function Register() {
   })
 
   const onSubmit = (data: RegisterForm) => {
-    registerUser({ ...data, roles: ['ROLE_USER'] })
+    registerUser({
+      username: data.username,
+      email: data.email,
+      password: data.password
+    })
   }
 
   return (

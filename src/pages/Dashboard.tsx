@@ -3,40 +3,18 @@ import { Card } from '@/components/ui/Card'
 import { usePatients } from '@/hooks/usePatients'
 import { useTriages, usePatientTriages } from '@/hooks/useTriages'
 import { useAppointments, usePatientAppointments } from '@/hooks/useAppointments'
-import { useRole } from '@/hooks/useRole'
 import { Users, Activity, Calendar, TrendingUp, Heart, Clock, CheckCircle, AlertCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 export default function Dashboard() {
   const { user } = useAuthStore()
-  const { isAdmin, isDoctor, isPatient } = useRole()
   const { patients } = usePatients()
   const { triages } = useTriages()
   const { appointments } = useAppointments()
-  const { data: myTriages } = usePatientTriages(user?.patientId!)
-  const { data: myAppointments } = usePatientAppointments(user?.patientId!)
   const navigate = useNavigate()
 
-  const stats = isPatient ? [
-    {
-      label: 'Mis Triajes',
-      value: myTriages?.length || 0,
-      icon: Activity,
-      color: 'from-green-500 to-green-600',
-      bgColor: 'bg-green-50',
-      textColor: 'text-green-600',
-      route: '/my-triages',
-    },
-    {
-      label: 'Mis Citas',
-      value: myAppointments?.length || 0,
-      icon: Calendar,
-      color: 'from-purple-500 to-purple-600',
-      bgColor: 'bg-purple-50',
-      textColor: 'text-purple-600',
-      route: '/my-appointments',
-    },
-  ] : [
+  // Mostrar todas las estadísticas disponibles
+  const stats = [
     {
       label: 'Pacientes',
       value: patients?.length || 0,
@@ -66,8 +44,8 @@ export default function Dashboard() {
     },
   ]
 
-  const upcomingAppointments = isPatient ? myAppointments?.slice(0, 3) || [] : appointments?.slice(0, 3) || []
-  const recentTriages = isPatient ? myTriages?.slice(0, 3) || [] : triages?.slice(0, 3) || []
+  const upcomingAppointments = appointments?.slice(0, 3) || []
+  const recentTriages = triages?.slice(0, 3) || []
 
   return (
     <div className="space-y-8">
@@ -115,17 +93,8 @@ export default function Dashboard() {
             <h3 className="text-xl font-bold text-gray-900">{user?.username}</h3>
             <p className="text-sm text-gray-600 mt-1">{user?.email}</p>
             <div className="mt-4 pt-4 border-t border-gray-200 w-full">
-              <p className="text-xs text-gray-600 mb-2"><strong>Roles:</strong></p>
-              <div className="flex flex-wrap gap-2 justify-center">
-                {user?.roles.map((role, idx) => (
-                  <span
-                    key={idx}
-                    className="inline-block px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs font-semibold rounded-full"
-                  >
-                    {role}
-                  </span>
-                ))}
-              </div>
+              <p className="text-xs text-gray-600 mb-2"><strong>Usuario Registrado</strong></p>
+              <p className="text-xs text-gray-500">Acceso completo al sistema</p>
             </div>
           </div>
         </Card>
@@ -138,19 +107,14 @@ export default function Dashboard() {
               Acciones Rápidas
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {(isPatient ? [
-                { icon: Activity, label: 'Mis Triajes', color: 'from-green-400 to-green-500', action: () => navigate('/my-triages') },
-                { icon: Calendar, label: 'Mis Citas', color: 'from-purple-400 to-purple-500', action: () => navigate('/my-appointments') },
-                { icon: CheckCircle, label: 'Historial Médico', color: 'from-pink-400 to-pink-500', action: () => navigate('/my-triages') },
-                { icon: AlertCircle, label: 'Notificaciones', color: 'from-red-400 to-red-500', action: () => navigate('/notifications') },
-              ] : [
-                { icon: Users, label: 'Nuevo Paciente', color: 'from-blue-400 to-blue-500', action: () => navigate('/patients') },
-                { icon: Activity, label: 'Registrar Triaje', color: 'from-green-400 to-green-500', action: () => navigate('/triages') },
-                { icon: Calendar, label: 'Agendar Cita', color: 'from-purple-400 to-purple-500', action: () => navigate('/appointments') },
-                { icon: TrendingUp, label: 'Ver Reportes', color: 'from-orange-400 to-orange-500', action: () => navigate('/triages') },
+              {[
+                { icon: Users, label: 'Pacientes', color: 'from-blue-400 to-blue-500', action: () => navigate('/patients') },
+                { icon: Activity, label: 'Triajes', color: 'from-green-400 to-green-500', action: () => navigate('/triages') },
+                { icon: Calendar, label: 'Citas', color: 'from-purple-400 to-purple-500', action: () => navigate('/appointments') },
+                { icon: TrendingUp, label: 'Reportes', color: 'from-orange-400 to-orange-500', action: () => navigate('/triages') },
                 { icon: CheckCircle, label: 'Historial', color: 'from-pink-400 to-pink-500', action: () => navigate('/appointments') },
-                { icon: AlertCircle, label: 'Alertas', color: 'from-red-400 to-red-500', action: () => navigate('/notifications') },
-              ]).map((action, idx) => {
+                { icon: AlertCircle, label: 'Notificaciones', color: 'from-red-400 to-red-500', action: () => navigate('/notifications') },
+              ].map((action, idx) => {
                 const ActionIcon = action.icon
                 return (
                   <button
@@ -175,7 +139,7 @@ export default function Dashboard() {
           <div>
             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <Calendar className="h-5 w-5 text-purple-500" />
-              {isPatient ? 'Mis Citas' : 'Próximas Citas'}
+              Próximas Citas
             </h3>
             {upcomingAppointments.length > 0 ? (
               <div className="space-y-3">
@@ -200,7 +164,7 @@ export default function Dashboard() {
           <div>
             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
               <Activity className="h-5 w-5 text-green-500" />
-              {isPatient ? 'Mis Triajes' : 'Triajes Recientes'}
+              Triajes Recientes
             </h3>
             {recentTriages.length > 0 ? (
               <div className="space-y-3">
@@ -232,31 +196,27 @@ export default function Dashboard() {
 
       {/* Footer Stats */}
       <Card className="border-0 shadow-lg bg-gradient-to-r from-indigo-600 to-indigo-700 text-white">
-        <div className={`grid grid-cols-1 ${isPatient ? 'md:grid-cols-2' : 'md:grid-cols-4'} gap-4 text-center`}>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
           <div>
             <Clock className="h-6 w-6 mx-auto mb-2 text-indigo-200" />
             <p className="text-2xl font-bold">{upcomingAppointments.length}</p>
-            <p className="text-sm text-indigo-200">{isPatient ? 'Mis Citas' : 'Citas Próximas'}</p>
+            <p className="text-sm text-indigo-200">Citas Próximas</p>
           </div>
           <div>
             <Heart className="h-6 w-6 mx-auto mb-2 text-indigo-200" />
             <p className="text-2xl font-bold">{recentTriages.length}</p>
-            <p className="text-sm text-indigo-200">{isPatient ? 'Mis Triajes' : 'Triajes Activos'}</p>
+            <p className="text-sm text-indigo-200">Triajes Activos</p>
           </div>
-          {!isPatient && (
-            <>
-              <div>
-                <Users className="h-6 w-6 mx-auto mb-2 text-indigo-200" />
-                <p className="text-2xl font-bold">{patients?.length || 0}</p>
-                <p className="text-sm text-indigo-200">Pacientes Totales</p>
-              </div>
-              <div>
-                <TrendingUp className="h-6 w-6 mx-auto mb-2 text-indigo-200" />
-                <p className="text-2xl font-bold">98%</p>
-                <p className="text-sm text-indigo-200">Satisfacción</p>
-              </div>
-            </>
-          )}
+          <div>
+            <Users className="h-6 w-6 mx-auto mb-2 text-indigo-200" />
+            <p className="text-2xl font-bold">{patients?.length || 0}</p>
+            <p className="text-sm text-indigo-200">Pacientes Totales</p>
+          </div>
+          <div>
+            <TrendingUp className="h-6 w-6 mx-auto mb-2 text-indigo-200" />
+            <p className="text-2xl font-bold">98%</p>
+            <p className="text-sm text-indigo-200">Satisfacción</p>
+          </div>
         </div>
       </Card>
     </div>

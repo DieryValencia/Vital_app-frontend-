@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { StatusBadge } from './StatusBadge'
 import { StatusSelector } from './StatusSelector'
-import { useRole } from '@/hooks/useRole'
 import type { Appointment, AppointmentStatus } from '@/api/appointments.types'
 import { formatDateTime } from '@/utils/dateUtils'
 
@@ -20,7 +19,6 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   onDelete,
   onStatusChange
 }) => {
-  const { isDoctor, isAdmin } = useRole()
 
   // Validar que el paciente existe
   if (!appointment.patient) {
@@ -83,7 +81,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
         </div>
       )}
 
-      {(isDoctor || isAdmin) && (
+      {(
         <>
           <div className="mb-4">
             <p className="text-xs text-gray-500 mb-2">Cambiar estado:</p>

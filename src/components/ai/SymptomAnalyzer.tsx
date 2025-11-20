@@ -1,45 +1,61 @@
 import { useState } from 'react'
 import { Brain, Send, RotateCcw, AlertCircle, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
-import { useOpenAI } from '@/hooks/useOpenAI'
+import { useAI } from '@/hooks/useAI'
 import { Card } from '@/components/ui/Card'
 
 export const SymptomAnalyzer: React.FC = () => {
   const [symptoms, setSymptomsInput] = useState('')
   const [medicalHistory, setMedicalHistory] = useState('')
+  const [patientAge, setPatientAge] = useState('')
+  const [patientGender, setPatientGender] = useState('')
+  const [additionalInfo, setAdditionalInfo] = useState('')
+  const [diagnosis, setDiagnosis] = useState('')
+  const [currentMedications, setCurrentMedications] = useState('')
+  const [conversationId, setConversationId] = useState('')
+  const [context, setContext] = useState('')
   const [activeTab, setActiveTab] = useState<'analyze' | 'recommend' | 'chat'>('analyze')
 
   const {
     analyzeSymptoms,
-    analyzeSymptomData,
+    analyzeSymptomsData,
     isAnalyzingSymptoms,
     resetAnalyzeSymptoms,
-    generateRecommendation,
-    recommendationData,
-    isGeneratingRecommendation,
-    resetRecommendation,
-    sendChat,
+    getMedicalRecommendations,
+    medicalRecommendationsData,
+    isGettingRecommendations,
+    resetMedicalRecommendations,
+    chatWithAI,
     chatData,
     isChattingWithAI,
     resetChat,
-  } = useOpenAI()
+  } = useAI()
 
   const handleAnalyzeSymptoms = () => {
     if (!symptoms.trim()) {
       alert('Por favor ingresa los síntomas')
       return
     }
-    analyzeSymptoms({ symptoms: symptoms.trim() })
+    analyzeSymptoms({
+      symptoms: symptoms.trim(),
+      patientAge: patientAge.trim() || undefined,
+      patientGender: patientGender.trim() || undefined,
+      additionalInfo: additionalInfo.trim() || undefined
+    })
   }
 
-  const handleGenerateRecommendation = () => {
+  const handleGetRecommendations = () => {
     if (!symptoms.trim()) {
       alert('Por favor ingresa los síntomas')
       return
     }
-    generateRecommendation({
+    getMedicalRecommendations({
       symptoms: symptoms.trim(),
-      medicalHistory: medicalHistory.trim(),
+      diagnosis: diagnosis.trim() || undefined,
+      patientAge: patientAge.trim() || undefined,
+      patientGender: patientGender.trim() || undefined,
+      medicalHistory: medicalHistory.trim() || undefined,
+      currentMedications: currentMedications.trim() || undefined,
     })
   }
 
@@ -48,14 +64,25 @@ export const SymptomAnalyzer: React.FC = () => {
       alert('Por favor ingresa tu pregunta')
       return
     }
-    sendChat({ prompt: symptoms.trim() })
+    chatWithAI({
+      message: symptoms.trim(),
+      conversationId: conversationId.trim() || undefined,
+      context: context.trim() || undefined
+    })
   }
 
   const handleReset = () => {
     setSymptomsInput('')
     setMedicalHistory('')
+    setPatientAge('')
+    setPatientGender('')
+    setAdditionalInfo('')
+    setDiagnosis('')
+    setCurrentMedications('')
+    setConversationId('')
+    setContext('')
     resetAnalyzeSymptoms()
-    resetRecommendation()
+    resetMedicalRecommendations()
     resetChat()
   }
 
@@ -119,10 +146,56 @@ export const SymptomAnalyzer: React.FC = () => {
                 value={symptoms}
                 onChange={(e) => setSymptomsInput(e.target.value)}
                 placeholder="Ej: Dolor de cabeza persistente, fiebre de 38°C, náuseas..."
-                rows={5}
+                rows={4}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={isAnalyzingSymptoms}
               />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Edad del paciente
+                </label>
+                <input
+                  type="number"
+                  value={patientAge}
+                  onChange={(e) => setPatientAge(e.target.value)}
+                  placeholder="Ej: 25"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isAnalyzingSymptoms}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Género del paciente
+                </label>
+                <select
+                  value={patientGender}
+                  onChange={(e) => setPatientGender(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isAnalyzingSymptoms}
+                >
+                  <option value="">Seleccionar...</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Información adicional (opcional)
+                </label>
+                <input
+                  value={additionalInfo}
+                  onChange={(e) => setAdditionalInfo(e.target.value)}
+                  placeholder="Ej: Comenzó hace 2 horas"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isAnalyzingSymptoms}
+                />
+              </div>
             </div>
 
             <div className="flex gap-3">
@@ -144,13 +217,22 @@ export const SymptomAnalyzer: React.FC = () => {
             </div>
 
             {/* Response */}
-            {analyzeSymptomData && (
+            {analyzeSymptomsData && (
               <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="flex items-start gap-3">
                   <CheckCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="font-semibold text-blue-900">Análisis de Síntomas</h3>
-                    <p className="text-blue-800 mt-2 whitespace-pre-wrap">{analyzeSymptomData.data}</p>
+                    <div className="text-blue-800 mt-2 space-y-2">
+                      <p><strong>Análisis:</strong> {analyzeSymptomsData.data.analysis}</p>
+                      <p><strong>Posibles condiciones:</strong> {analyzeSymptomsData.data.possibleConditions}</p>
+                      <p><strong>Recomendaciones:</strong> {analyzeSymptomsData.data.recommendations}</p>
+                      <p><strong>Nivel de urgencia:</strong> <span className={`font-medium ${
+                        analyzeSymptomsData.data.urgencyLevel?.toLowerCase() === 'alto' ? 'text-red-600' :
+                        analyzeSymptomsData.data.urgencyLevel?.toLowerCase() === 'medio' ? 'text-yellow-600' : 'text-green-600'
+                      }`}>{analyzeSymptomsData.data.urgencyLevel}</span></p>
+                      <p className="text-gray-600 italic text-sm">{analyzeSymptomsData.data.disclaimer}</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -161,18 +243,66 @@ export const SymptomAnalyzer: React.FC = () => {
         {/* Recommend Tab */}
         {activeTab === 'recommend' && (
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Síntomas
-              </label>
-              <textarea
-                value={symptoms}
-                onChange={(e) => setSymptomsInput(e.target.value)}
-                placeholder="Ej: Dolor de cabeza persistente, fiebre de 38°C..."
-                rows={4}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                disabled={isGeneratingRecommendation}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Síntomas
+                </label>
+                <textarea
+                  value={symptoms}
+                  onChange={(e) => setSymptomsInput(e.target.value)}
+                  placeholder="Ej: Dolor de cabeza persistente, fiebre de 38°C..."
+                  rows={3}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isGettingRecommendations}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Edad del paciente
+                </label>
+                <input
+                  type="number"
+                  value={patientAge}
+                  onChange={(e) => setPatientAge(e.target.value)}
+                  placeholder="Ej: 25"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isGettingRecommendations}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Género del paciente
+                </label>
+                <select
+                  value={patientGender}
+                  onChange={(e) => setPatientGender(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isGettingRecommendations}
+                >
+                  <option value="">Seleccionar...</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Diagnóstico preliminar (opcional)
+                </label>
+                <input
+                  value={diagnosis}
+                  onChange={(e) => setDiagnosis(e.target.value)}
+                  placeholder="Ej: Posible neumonía"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isGettingRecommendations}
+                />
+              </div>
             </div>
 
             <div>
@@ -183,16 +313,30 @@ export const SymptomAnalyzer: React.FC = () => {
                 value={medicalHistory}
                 onChange={(e) => setMedicalHistory(e.target.value)}
                 placeholder="Ej: Diabetes tipo 2, alergia a penicilina..."
-                rows={3}
+                rows={2}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                disabled={isGeneratingRecommendation}
+                disabled={isGettingRecommendations}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Medicamentos actuales (opcional)
+              </label>
+              <textarea
+                value={currentMedications}
+                onChange={(e) => setCurrentMedications(e.target.value)}
+                placeholder="Ej: Metformina 500mg, Losartán 50mg"
+                rows={2}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={isGettingRecommendations}
               />
             </div>
 
             <div className="flex gap-3">
               <Button
-                onClick={handleGenerateRecommendation}
-                isLoading={isGeneratingRecommendation}
+                onClick={handleGetRecommendations}
+                isLoading={isGettingRecommendations}
                 className="flex items-center gap-2"
               >
                 <Send className="h-4 w-4" />
@@ -201,20 +345,27 @@ export const SymptomAnalyzer: React.FC = () => {
               <Button
                 onClick={handleReset}
                 variant="secondary"
-                disabled={isGeneratingRecommendation}
+                disabled={isGettingRecommendations}
               >
                 <RotateCcw className="h-4 w-4" />
               </Button>
             </div>
 
             {/* Response */}
-            {recommendationData && (
+            {medicalRecommendationsData && (
               <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-start gap-3">
                   <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-1" />
                   <div>
-                    <h3 className="font-semibold text-green-900">Recomendación</h3>
-                    <p className="text-green-800 mt-2 whitespace-pre-wrap">{recommendationData.data}</p>
+                    <h3 className="font-semibold text-green-900">Recomendaciones Médicas</h3>
+                    <div className="text-green-800 mt-2 space-y-2">
+                      <p><strong>Plan de tratamiento:</strong> {medicalRecommendationsData.data.treatmentPlan}</p>
+                      <p><strong>Medicamentos:</strong> {medicalRecommendationsData.data.medications}</p>
+                      <p><strong>Recomendaciones de estilo de vida:</strong> {medicalRecommendationsData.data.lifestyleRecommendations}</p>
+                      <p><strong>Instrucciones de seguimiento:</strong> {medicalRecommendationsData.data.followUpInstructions}</p>
+                      <p><strong>Cuándo buscar ayuda:</strong> {medicalRecommendationsData.data.whenToSeekHelp}</p>
+                      <p className="text-gray-600 italic text-sm">{medicalRecommendationsData.data.disclaimer}</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -233,10 +384,38 @@ export const SymptomAnalyzer: React.FC = () => {
                 value={symptoms}
                 onChange={(e) => setSymptomsInput(e.target.value)}
                 placeholder="Ej: ¿Cuáles son los síntomas de la gripe? ¿Cómo prevenir contagios?"
-                rows={5}
+                rows={4}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={isChattingWithAI}
               />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  ID de conversación (opcional)
+                </label>
+                <input
+                  value={conversationId}
+                  onChange={(e) => setConversationId(e.target.value)}
+                  placeholder="Ej: conv_123"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isChattingWithAI}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Contexto (opcional)
+                </label>
+                <input
+                  value={context}
+                  onChange={(e) => setContext(e.target.value)}
+                  placeholder="Ej: Consulta general sobre salud"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isChattingWithAI}
+                />
+              </div>
             </div>
 
             <div className="flex gap-3">
@@ -264,7 +443,16 @@ export const SymptomAnalyzer: React.FC = () => {
                   <CheckCircle className="h-5 w-5 text-purple-600 flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="font-semibold text-purple-900">Respuesta IA</h3>
-                    <p className="text-purple-800 mt-2 whitespace-pre-wrap">{chatData.data}</p>
+                    <div className="text-purple-800 mt-2 space-y-2">
+                      <p>{chatData.data.response}</p>
+                      {chatData.data.conversationId && (
+                        <p className="text-sm text-gray-600">ID Conversación: {chatData.data.conversationId}</p>
+                      )}
+                      {chatData.data.timestamp && (
+                        <p className="text-sm text-gray-600">Timestamp: {new Date(chatData.data.timestamp).toLocaleString()}</p>
+                      )}
+                      <p className="text-gray-600 italic text-sm">{chatData.data.disclaimer}</p>
+                    </div>
                   </div>
                 </div>
               </div>
